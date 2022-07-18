@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "masterVmSize": {
+      "value": "Standard_D8s_v3"
+    },
+    "workerVmSize": {
+      "value": "Standard_D4s_v3"
+    },
+    "workerVmDiskSize": {
+      "value": 128
+    },
+    "workerCount": {
+      "value": 3
+    },
+    "location": {
+      "value": null
+    },
+    "aadObjectId": {
+      "value": null
+    },
+    "aadClientSecret": {
+      "value": null
+    },
+    "clusterVnetName": {
+      "value": null
+    },
+    "clusterVnetCidr": {
+      "value": "10.0.0.0/15"
+    },
+    "masterSubnetCidr": {
+      "value": "10.0.0.0/25"
+    },
+    "workerSubnetCidr": {
+      "value": "10.0.1.0/24"
+    },
+    "apiServerVisibility": {
+      "value": "Public"
+    },
+    "ingressVisibility": {
+      "value": "Public"
+    },
+    "rpObjectId": {
+      "value": null
+    },
+    "pullSecret": {
+      "value": null
+    },
+    "tagsByResource": {
+      "value": {}
+    }
+  }
+}
