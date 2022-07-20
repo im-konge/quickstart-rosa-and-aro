@@ -1,5 +1,3 @@
-#!/usr/bin/env groovy
-
 def STRIMZI_TOOLS = "strimzi-tools"
 
 pipeline {
@@ -21,14 +19,6 @@ pipeline {
             '''
         }
     }
-    parameters {
-        string(name: 'CLUSTER_NAME', defaultValue: "my-aro-cluster", description: "Name of the ROSA cluster")
-        string(name: 'REGION', defaultValue: "us-east-2", description: "AWS region where ROSA cluster should be installed")
-        string(name: 'OCM_TOKEN', defaultValue: "", description: "OCM token")
-        string(name: 'PULL_SECRET', defaultValue: "", description: "Pull secret for the ROSA cluster - enable pulling from RH registries f.e.")
-        string(name: 'AWS_ACCESS_KEY_ID', defaultValue: "", description: "AWS access key ID")
-        string(name: 'AWS_SECRET_ACCESS_KEY', defaultValue: "", description: "AWS secret access key")
-    }
     environment {
         AWS_CREDENTIALS_FILE_PATH = "~/.aws/credentials"
     }
@@ -48,11 +38,11 @@ pipeline {
                 container(STRIMZI_TOOLS) {
                     script {
                         // Configure AWS credentials and region needed for ROSA installation
-                        sh("aws configure set default.default.aws_access_key_id ${params.AWS_ACCESS_KEY_ID}")
-                        sh("aws configure set default.default.aws_secret_access_key ${params.AWS_SECRET_ACCESS_KEY}")
-                        sh("aws configure set default.region ${params.REGION}")
+                        sh("aws configure set default.aws_access_key_id ${env.AWS_ACCESS_KEY_ID}")
+                        sh("aws configure set default.aws_secret_access_key ${env.AWS_SECRET_ACCESS_KEY}")
+                        sh("aws configure set default.region ${env.REGION}")
 
-                        sh("rosa login --token ${params.OCM_TOKEN}")
+                        sh("rosa login --token ${env.OCM_TOKEN}")
                     }
                 }
             }
@@ -62,8 +52,8 @@ pipeline {
                 container(STRIMZI_TOOLS) {
                     script {
                         sh("rosa init")
-                        sh("rosa create cluster -c ${params.CLUSTER_NAME}")
-                        sh("rosa logs install -c ${params.CLUSTER_NAME} --watch")
+                        sh("rosa create cluster -c ${env.CLUSTER_NAME}")
+                        sh("rosa logs install -c ${env.CLUSTER_NAME} --watch")
                     }
                 }
             }
@@ -72,7 +62,7 @@ pipeline {
             steps {
                 container(STRIMZI_TOOLS) {
                     script {
-                        sh("rosa describe cluster -c ${params.CLUSTER_NAME} > rosa_cluster_desc.txt")
+                        sh("rosa describe cluster -c ${env.CLUSTER_NAME} > rosa_cluster_desc.txt")
                     }
                 }
             }
@@ -81,7 +71,7 @@ pipeline {
             steps {
                 container(STRIMZI_TOOLS) {
                     script {
-                        sh("rosa create admin -c ${params.CLUSTER_NAME} > rosa_login.txt")
+                        sh("rosa create admin -c ${env.CLUSTER_NAME} > rosa_login.txt")
                     }
                 }
             }
@@ -101,11 +91,20 @@ pipeline {
                 }
             }
         }
+        stage("Login to ROSA cluster") {
+            steps {
+                container(STRIMZI_TOOLS) {
+                    script {
+                        sh(script: "oc login -u ${env.ADMIN_USER} -p ${env.ADMIN_PASS} ${env.API_URL}")
+                    }
+                }
+            }
+        }
         stage("Update pull-secret for ROSA cluster") {
             steps {
                 container(STRIMZI_TOOLS) {
                     script {
-                        sh(script: "oc set data secret/pull-secret -n openshift-config .dockerconfigjson=${params.PULL_SECRET}")
+                        sh(script: "oc set data secret/pull-secret -n openshift-config .dockerconfigjson='${env.PULL_SECRET}'")
                     }
                 }
             }
