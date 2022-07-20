@@ -4,8 +4,21 @@ def STRIMZI_TOOLS = "strimzi-tools"
 
 pipeline {
     agent {
-        node {
-            label(STRIMZI_TOOLS)
+        kubernetes {
+            yaml '''
+            spec:
+                containers:
+                - image: "quay.io/rh_integration/strimzi-tools:latest"
+                  name: "${STRIMZI_TOOLS}"
+                  workingDir: "/home/jenkins"
+                  command: "sleep 99d"
+                  args: ""
+                  resourceLimitMemory: "4Gi"
+                  resourceRequestMemory: "2Gi"
+                  resourceLimitCpu: "2"
+                  alwaysPullImage: true
+                  runAsUser: 1000
+            '''
         }
     }
     parameters {
