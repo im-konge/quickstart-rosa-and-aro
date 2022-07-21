@@ -1,5 +1,3 @@
-#!/usr/bin/env groovy
-
 def STRIMZI_TOOLS = "strimzi-tools"
 def QUICKSTART_DIR = "quickstart-rosa-and-aro"
 
@@ -66,7 +64,7 @@ pipeline {
                                 " --resource-group ${env.RESOURCE_GROUP}" +
                                 " --parameters aadClientSecret=${env.SR_PASSWORD} pullSecret=${env.PULL_SECRET} " +
                                 " clusterName=${env.CLUSTER_NAME} domain=${env.DOMAIN} aadClientId=${env.SR_USERNAME} " +
-                                " location=${env.REGION} clusterVnetName=${env.AZ_VNET} rpObjectId=${env.RP_OBJECT_ID}")
+                                " location=${env.REGION} clusterVnetName=${env.AZ_VNET} rpObjectId=${env.RP_OBJECT_ID} aadObjectId=${env.AZ_OBJECT_ID}")
                         }
                     }
                 }

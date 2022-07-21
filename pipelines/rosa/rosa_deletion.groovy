@@ -1,5 +1,3 @@
-#!/usr/bin/env groovy
-
 def STRIMZI_TOOLS = "strimzi-tools"
 
 pipeline {
