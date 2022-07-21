@@ -59,6 +59,7 @@ pipelineJob("${folderName}/aro_provision") {
         stringParam('PULL_SECRET', "", "Pull secret for the ARO cluster - enable pulling from RH registries f.e.")
         stringParam('AZ_VNET', "", "Name of VNET for ARO cluster")
         stringParam('RP_OBJECT_ID', "", "Object ID of 'Azure Red Hat OpenShift RP' service principal - az ad sp list --display-name \"Azure Red Hat OpenShift RP\" --query \"[0].id\" -o tsv")
+        stringParam('AZ_OBJECT_ID', "", "The Object ID of an Azure Active Directory client application")
     }
 
     logRotator {
